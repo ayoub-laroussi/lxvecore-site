@@ -7,7 +7,7 @@
 }
 
 .spotify-embed {
-  max-width: 500px;
+  max-width: 750px, 500px;
   margin-inline: auto;
   border-radius: var(--radius-lg);
   overflow: hidden;
