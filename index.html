@@ -32,7 +32,17 @@
   <link rel="icon" href="assets/img/coeur.png">
 </head>
 
-<body>
+<body class="intro-active">
+
+  <!-- =============================================
+       INTRO SCREEN
+       ============================================= -->
+  <div class="intro-overlay" id="intro-overlay">
+    <button class="intro-overlay__btn" id="intro-btn">
+      <span class="intro-overlay__btn-text">Découvrir l'univers</span>
+      <span class="intro-overlay__btn-brand">LXVECORE</span>
+    </button>
+  </div>
 
   <!-- Spatial Effects — Background layers -->
   <div class="stars" id="stars-small" aria-hidden="true"></div>
@@ -41,6 +51,8 @@
   <div class="nebula-glow nebula-glow--top" aria-hidden="true"></div>
   <div class="nebula-glow nebula-glow--bottom" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
+
+  <div id="main-content" class="main-content hidden">
 
   <!-- =============================================
        HERO
@@ -252,6 +264,7 @@
     </div>
     <p class="footer__copyright">&copy; 2026 LXVECORE. All rights reserved.</p>
   </footer>
+  </div>
 
   <!-- JavaScript -->
   <script src="js/main.js" defer></script>

@@ -96,4 +96,86 @@
   if (window.matchMedia('(min-width: 768px)').matches) {
     window.addEventListener('scroll', onScroll, { passive: true });
   }
+
+  // ===========================
+  // 5. Audio Context & Interaction
+  // ===========================
+  
+  // -- Ambient Sound --
+  const ambientAudio = new Audio('assets/sounds/siteweblxvecoremusic.mp3');
+  ambientAudio.volume = 0.15;
+  ambientAudio.loop = true;
+
+  const playAmbient = () => {
+    if (ambientAudio.paused) {
+      ambientAudio.play().catch(e => {
+        console.log('Autoplay prevented, waiting for interaction...', e);
+      });
+    }
+  };
+
+  playAmbient();
+
+  // -- Pluck Hover Sound --
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  let audioCtx;
+  let pluckBuffer = null;
+
+  const initAudioCtx = () => {
+    if (!audioCtx) {
+      audioCtx = new AudioContext();
+      fetch('assets/sounds/pluck hover sound.mp3')
+        .then(res => res.arrayBuffer())
+        .then(data => audioCtx.decodeAudioData(data))
+        .then(buffer => {
+          pluckBuffer = buffer;
+        })
+        .catch(err => console.error('Error loading hover sound:', err));
+    } else if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  };
+
+  const startAudioOnInteraction = () => {
+    playAmbient();
+    initAudioCtx();
+  };
+
+  const introOverlay = document.getElementById('intro-overlay');
+  const mainContent = document.getElementById('main-content');
+
+  if (introOverlay) {
+    introOverlay.addEventListener('click', () => {
+      introOverlay.classList.add('hidden');
+      if (mainContent) mainContent.classList.remove('hidden');
+      document.body.classList.remove('intro-active');
+      startAudioOnInteraction();
+    });
+  } else {
+    ['click', 'scroll', 'touchstart', 'mousemove'].forEach(evt => {
+      document.body.addEventListener(evt, startAudioOnInteraction, { once: true });
+    });
+  }
+
+  function playPluck() {
+    if (!audioCtx || !pluckBuffer) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    const source = audioCtx.createBufferSource();
+    source.buffer = pluckBuffer;
+    source.playbackRate.value = 0.9 + Math.random() * 0.2;
+
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = 0.3;
+
+    source.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    source.start(0);
+  }
+
+  const hoverElements = document.querySelectorAll('a, button, .hero__cta, .link-card');
+  hoverElements.forEach(el => {
+    el.addEventListener('mouseenter', playPluck);
+  });
+
 })();
